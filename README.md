@@ -68,7 +68,7 @@ berks vendor cookbooks
 
 # 仮想環境設定
 
-- ip: 192.168.33.14
+- ip: 192.168.33.10
 - 起動 : `vagrant up`
 - 停止 : `vagrant halt`
 - mongodb
