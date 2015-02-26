@@ -1,0 +1,8 @@
+/.vagrant
+/.chef
+/.bundle
+/.ruby-version
+/bundle
+/cookbooks/
+/app
+/vendor
