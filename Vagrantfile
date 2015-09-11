@@ -29,7 +29,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.13"
+  config.vm.network "forwarded_port", guest: 28017, host: 28017
+  config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -100,11 +102,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.json = {
       :nodebrew => {
         :nodes => [
-          {:version => "0.10.36", :binary => true}
+          {:version => "4.0.0", :binary => true}
         ],
-        :use => "0.10.36",
+        :use => "4.0.0",
         :npm => {
-          "0.10.36" => [
+          "4.0.0" => [
             "grunt-cli",
             "mean-cli",
             "bower"
@@ -115,7 +117,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.run_list = %w[
       recipe[apt]
       recipe[git]
-      recipe[mongodb]
+      recipe[mongodb3]
       recipe[nodebrew]
     ]
   end

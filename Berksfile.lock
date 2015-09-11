@@ -1,9 +1,7 @@
 DEPENDENCIES
   apt
   git
-  mongodb
-    git: git://github.com/edelight/chef-mongodb.git
-    revision: dc5836318a27331f605f264d946931927dd26bb8
+  mongodb3
   nodebrew
     git: https://github.com/linyows/nodebrew-cookbook.git
     revision: 403eeeedbca0ca968d2df0d5b47238eba4a6b74f
@@ -21,22 +19,20 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  mongodb (0.16.3)
-    apt (>= 1.8.2)
-    python (>= 0.0.0)
-    yum (>= 3.0.0)
+  mongodb3 (2.0.0)
+    apt (>= 0.0.0)
+    runit (~> 1.7.0)
+    user (>= 0.0.0)
+    yum (>= 0.0.0)
   nodebrew (0.3.0)
     build-essential (>= 0.0.0)
     git (>= 0.0.0)
-  python (1.4.6)
-    build-essential (>= 0.0.0)
-    yum-epel (>= 0.0.0)
-  runit (1.5.14)
-    build-essential (>= 0.0.0)
-    yum (~> 3.0)
-    yum-epel (>= 0.0.0)
+  packagecloud (0.1.0)
+  runit (1.7.2)
+    packagecloud (>= 0.0.0)
+  user (0.4.2)
   windows (1.36.1)
     chef_handler (>= 0.0.0)
-  yum (3.5.2)
+  yum (3.7.1)
   yum-epel (0.6.0)
     yum (~> 3.0)
