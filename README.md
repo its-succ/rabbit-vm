@@ -68,10 +68,10 @@ berks vendor cookbooks
 
 # 仮想環境設定
 
-- ip: 192.168.33.10
+- ip: 192.168.33.13
 - 起動 : `vagrant up`
 - 停止 : `vagrant halt`
-- mongodb
+- mongodb3
 - Node.js
   - bower
   - grunt

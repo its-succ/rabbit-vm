@@ -1,8 +1,6 @@
-source "http://api.berkshelf.com"
+source "https://api.berkshelf.com"
 
 cookbook "apt"
 cookbook "git"
-#cookbook "java"
-#cookbook "maven"
-cookbook 'mongodb', git: 'git://github.com/edelight/chef-mongodb.git'
+cookbook 'mongodb3'
 cookbook 'nodebrew', git: 'https://github.com/linyows/nodebrew-cookbook.git', branch: "v0.3.1"
