@@ -1,0 +1,16 @@
+postgresql_version: "9.6"
+postgresql_pgdata: /var/lib/postgresql/{{ postgresql_version }}/main
+postgresql_conf_dir: /etc/postgresql/{{ postgresql_version }}/main
+postgresql_service_name: postgresql
+
+postgresql_conf:
+  listen_addresses: "'*'"
+  timezone: Asia/Tokyo
+
+postgresql_pg_hba_conf:
+  - host all all 0.0.0.0/0 md5
+
+dbs:
+  - name: "rabbit"
+    user: "rabbit"
+    password: "rabbit"

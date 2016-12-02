@@ -6,3 +6,4 @@
 /cookbooks/
 /app
 /vendor
+*.retry

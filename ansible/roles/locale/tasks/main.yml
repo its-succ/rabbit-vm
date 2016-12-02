@@ -1,0 +1,13 @@
+---
+- name: install language-pack-ja
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - language-pack-ja
+    - language-pack-ja-base
+- debug: msg="set locale to {{ locale }} "
+- name: ensure locale
+  locale_gen:
+    name: "{{ locale }}"
+- name: set locale
+  command: /usr/sbin/update-locale LANG={{ locale }} LC_ALL={{ locale }}

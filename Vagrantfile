@@ -13,10 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "opscode-ubuntu-14.04"
-  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box"
-  config.omnibus.chef_version = "11.16.4"
-
+  #config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box = "ubuntu/xenial64"
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -30,8 +28,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.13"
-  config.vm.network "forwarded_port", guest: 28017, host: 28017
-  config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -62,6 +58,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #  vb.customize ["modifyvm", :id, "--vram", "256"]
   #  vb.customize ["setextradata", :id, "GUI/MaxGuestResolution", "any"]
   #  vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 0, '--device', 1, '--type', 'dvddrive', '--medium', "emptydrive"]
+  #  vb.customize ["modifyvm", :id, "--pae", "on"]
   end
   #
   # View the documentation for the provider you're using for more
@@ -96,31 +93,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
-  config.vm.provision :chef_solo do |chef|
-    chef.log_level = "debug"
-    chef.cookbooks_path = "./cookbooks"
-    chef.json = {
-      :nodebrew => {
-        :nodes => [
-          {:version => "4.0.0", :binary => true}
-        ],
-        :use => "4.0.0",
-        :npm => {
-          "4.0.0" => [
-            "grunt-cli",
-            "mean-cli",
-            "bower"
-          ]
-        }
-      }
-    }
-    chef.run_list = %w[
-      recipe[apt]
-      recipe[git]
-      recipe[mongodb3]
-      recipe[nodebrew]
-    ]
-  end
+
+  config.ssh.forward_agent = true
+
+  hosthome = ENV['HOME'] || ENV['USERPROFILE']
+  config.vm.provision "shell", :path => "provision.sh"
+  config.vm.synced_folder ".", "/vagrant", :mount_options => ['dmode=777', 'fmode=666']
+  config.vm.synced_folder hosthome, "/hosthome", :mount_options => ['dmode=700', 'fmode=400']
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
