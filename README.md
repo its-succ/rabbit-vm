@@ -14,7 +14,7 @@ Rabbit開発環境の仮想環境を起動するためのVagrant環境です。
 ## プラグインのインストール
 
 ```
-vagrant plugin install vagrant-omnibus
+vagrant plugin install vagrant-vbguest
 vagrant plugin install vagrant-cachier
 ```
 
@@ -23,4 +23,5 @@ vagrant plugin install vagrant-cachier
 - ip: 192.168.33.13
 - 起動 : `vagrant up`
 - 停止 : `vagrant halt`
-- Node.js
+- Node.js 6.x
+- PostgreSQL 9.6.1
