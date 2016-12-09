@@ -1,0 +1,101 @@
+---
+- name: add postgresql repository
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_lsb.codename }}-pgdg main {{ postgresql_version }}"
+- name: import postgres repository signing key
+  register: repo_key
+  apt_key:
+    url: http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc
+- name: update apt cache
+  when: repo_key.changed
+  apt:
+    update_cache: yes
+- name: install postgres {{ postgresql_version }}
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - postgresql-{{ postgresql_version }}
+    - python-psycopg2
+    - language-pack-ja
+  register: postgres
+  notify:
+    - restart postgresql
+- name: restart postgresql immediate
+  service: name=postgresql state=restarted enabled=yes
+  when: postgres.changed
+
+- name: create conf.d
+  file:
+    path: "{{ postgresql_conf_dir }}/conf.d"
+    state: directory
+    owner: postgres
+    group: postgres
+
+- name: set conf.d include in postgresql.conf
+  lineinfile:
+    line: "include_dir 'conf.d'"
+    dest: "{{ postgresql_conf_dir }}/postgresql.conf"
+    backup: yes
+  notify: reload postgresql
+
+- name: set config options
+  template:
+    src: 25rabbit_postgresql.conf.j2
+    dest: "{{ postgresql_conf_dir }}/conf.d/25rabbit_postgresql.conf"
+    owner: postgres
+    group: postgres
+    backup: yes
+  notify: reload postgresql
+
+- name: install pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: 0400
+    backup: yes
+  notify: reload postgresql
+
+- name: create data_directory
+  file:
+    path: "{{ postgresql_pgdata }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0700
+
+- stat:
+    path: "{{ postgresql_pgdata }}/PG_VERSION"
+  register: dbcluster
+- name: initdb
+  shell: /usr/lib/postgresql/{{ postgresql_version }}/bin/initdb {{ postgresql_pgdata }}
+  become: yes
+  become_user: postgres
+  register: postgres
+  when: not dbcluster.stat.exists
+
+- name: restart postgresql immediate
+  service: name=postgresql state=restarted
+  when: postgres.changed
+
+- name: create user
+  postgresql_user:
+    name: "{{ item.user }}"
+    password: "{{ item.password }}"
+    role_attr_flags: CREATEDB,NOSUPERUSER
+  become_user: postgres
+  become: yes
+  with_items: "{{ dbs }}"
+
+- name: db create
+  postgresql_db:
+    name: "{{ item.name }}"
+    owner: "{{ item.user }}"
+    encoding: "UTF-8"
+    lc_collate: "ja_JP.UTF-8"
+    lc_ctype: "ja_JP.UTF-8"
+    template: "template0"
+  become_user: postgres
+  become: yes
+  with_items: "{{ dbs }}"
